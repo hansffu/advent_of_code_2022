@@ -27,6 +27,7 @@ library
   exposed-modules:
       Lib
       Week1.Week1
+      Week2.Week2
   other-modules:
       Paths_advent_of_code2022
   hs-source-dirs:
