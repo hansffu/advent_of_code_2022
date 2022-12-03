@@ -1,4 +1,4 @@
-module Week3.Week3 (part1, part2) where
+module Day3.Day3 (part1, part2) where
 
 import Data.List (elemIndex)
 import Data.Maybe (fromMaybe)
@@ -6,8 +6,8 @@ import Data.Maybe (fromMaybe)
 part1 :: IO ()
 part1 = readFile filename >>= putStrLn . processInput1 . lines
   where
-    -- filename = "src/Week3/sample.txt"
-    filename = "src/Week3/input.txt"
+    -- filename = "src/Day3/sample.txt"
+    filename = "src/Day3/input.txt"
 
 processInput1 :: [String] -> String
 processInput1 input = show $ sum $ map (score . head . duplicates . groupBags) input
@@ -15,9 +15,9 @@ processInput1 input = show $ sum $ map (score . head . duplicates . groupBags) i
 part2 :: IO ()
 part2 = readFile filename >>= putStrLn . processInput2 . lines
   where
-    filename = "src/Week3/input.txt"
+    filename = "src/Day3/input.txt"
 
--- filename = "src/Week3/sample.txt"
+-- filename = "src/Day3/sample.txt"
 
 processInput2 :: [String] -> String
 processInput2 input = show $ sum $ map (score . head . duplicates3) groups

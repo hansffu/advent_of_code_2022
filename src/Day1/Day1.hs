@@ -1,4 +1,4 @@
-module Week1.Week1 (part1, part2) where
+module Day1.Day1 (part1, part2) where
 
 import Data.List.Split (splitOn)
 import Data.List (sort)
@@ -6,8 +6,8 @@ import Data.List (sort)
 part1 :: IO ()
 part1 = readFile filename >>= putStrLn . processInput1 . lines
   where
-    -- filename = "src/Week1/sample.txt"
-    filename = "src/Week1/input.txt"
+    -- filename = "src/Day1/sample.txt"
+    filename = "src/Day1/input.txt"
 
 processInput1 :: [String] -> String
 processInput1 input = show $ maximum groups
@@ -17,8 +17,8 @@ processInput1 input = show $ maximum groups
 part2 :: IO ()
 part2 = readFile filename >>= putStrLn . processInput2 . lines
   where
-    -- filename = "src/Week1/sample.txt"
-    filename = "src/Week1/input.txt"
+    -- filename = "src/Day1/sample.txt"
+    filename = "src/Day1/input.txt"
 
 processInput2 :: [String] -> String
 processInput2 input = show $ sum top3

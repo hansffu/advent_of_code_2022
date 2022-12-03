@@ -1,17 +1,17 @@
-module Week2.Week2 where
+module Day2.Day2 where
 
 part1 :: IO ()
 part1 = readFile filename >>= putStrLn . processInput1 . lines
   where
-    filename = "src/Week2/sample.txt"
+    filename = "src/Day2/sample.txt"
 
--- filename = "src/Week2/input.txt"
+-- filename = "src/Day2/input.txt"
 
 part2 :: IO ()
 part2 = readFile filename >>= putStrLn . processInput2 . lines
   where
-    -- filename = "src/Week2/sample.txt"
-    filename = "src/Week2/input.txt"
+    -- filename = "src/Day2/sample.txt"
+    filename = "src/Day2/input.txt"
 
 processInput1 :: [String] -> String
 processInput1 input = show $ sum $ map calculateScore input
