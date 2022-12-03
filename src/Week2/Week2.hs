@@ -4,7 +4,8 @@ part1 :: IO ()
 part1 = readFile filename >>= putStrLn . processInput1 . lines
   where
     filename = "src/Week2/sample.txt"
-    -- filename = "src/Week2/input.txt"
+
+-- filename = "src/Week2/input.txt"
 
 part2 :: IO ()
 part2 = readFile filename >>= putStrLn . processInput2 . lines
@@ -12,11 +13,11 @@ part2 = readFile filename >>= putStrLn . processInput2 . lines
     -- filename = "src/Week2/sample.txt"
     filename = "src/Week2/input.txt"
 
-processInput2 :: [String] -> String
-processInput2 input = show $ sum $ map (calculateScore . convertInput) input
-
 processInput1 :: [String] -> String
 processInput1 input = show $ sum $ map calculateScore input
+
+processInput2 :: [String] -> String
+processInput2 input = show $ sum $ map (calculateScore . convertInput) input
 
 calculateScore :: String -> Int
 calculateScore ('A' : ' ' : 'X' : []) = 3 + 1
