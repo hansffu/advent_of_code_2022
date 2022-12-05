@@ -29,6 +29,8 @@ library
       Day2.Day2
       Day3.Day3
       Day4.Day4
+      Day5.Part1
+      Day5.Part2
       Lib
   other-modules:
       Paths_advent_of_code2022
@@ -37,6 +39,7 @@ library
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints
   build-depends:
       base >=4.7 && <5
+    , extra
     , split
   default-language: Haskell2010
 
@@ -50,6 +53,7 @@ executable advent-of-code2022-exe
   build-depends:
       advent-of-code2022
     , base >=4.7 && <5
+    , extra
     , split
   default-language: Haskell2010
 
@@ -64,5 +68,6 @@ test-suite advent-of-code2022-test
   build-depends:
       advent-of-code2022
     , base >=4.7 && <5
+    , extra
     , split
   default-language: Haskell2010
