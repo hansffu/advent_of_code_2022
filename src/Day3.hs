@@ -7,11 +7,11 @@ import Utils (InputType (..), commonSolve)
 solve :: IO ()
 solve = commonSolve 3 Input part1 part2
 
-part1 :: [String] -> String
-part1 input = show $ sum $ map (score . head . duplicates . groupBags) input
+part1 :: [String] -> Int
+part1 input = sum $ map (score . head . duplicates . groupBags) input
 
-part2 :: [String] -> String
-part2 input = show $ sum $ map (score . head . duplicates3) groups
+part2 :: [String] -> Int
+part2 input = sum $ map (score . head . duplicates3) groups
  where
   groups = groupElves input
 

@@ -1,15 +1,16 @@
 module Utils (commonSolve, InputType (..), debug, readInt) where
+
 import Debug.Trace (traceShow)
 
 getInput :: String -> IO [String]
 getInput filename = lines <$> readFile filename
 
-commonSolve :: Int -> InputType -> ([String] -> String) -> ([String] -> String) -> IO ()
+commonSolve :: (Show a, Show b) =>  Int -> InputType -> ([String] -> a) -> ([String] -> b) -> IO ()
 commonSolve day inputType part1 part2 = do
   input <- getInput filename
   putStrLn $ "Day " <> show day <> ":"
-  putStrLn $ "Part 1:  " <> part1 input
-  putStrLn $ "Part 2:  " <> part2 input
+  putStrLn $ "Part 1:  " <> show (part1 input)
+  putStrLn $ "Part 2:  " <> show (part2 input)
   putStrLn "------------------------"
   where
     filename = "input/day" <> show day <> "." <> show inputType <> ".txt"

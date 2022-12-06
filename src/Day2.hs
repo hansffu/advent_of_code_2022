@@ -5,11 +5,11 @@ import Utils (InputType (..), commonSolve)
 solve :: IO ()
 solve = commonSolve 2 Input part1 part2
 
-part1 :: [String] -> String
-part1 input = show $ sum $ map calculateScore input
+part1 :: [String] -> Int
+part1 input = sum $ map calculateScore input
 
-part2 :: [String] -> String
-part2 input = show $ sum $ map (calculateScore . convertInput) input
+part2 :: [String] -> Int
+part2 input = sum $ map (calculateScore . convertInput) input
 
 calculateScore :: String -> Int
 calculateScore ['A', ' ', 'X'] = 3 + 1

@@ -6,11 +6,11 @@ import Utils (InputType (..), commonSolve, readInt)
 solve :: IO ()
 solve = commonSolve 4 Input part1 part2
 
-part1 :: [String] -> String
-part1 input = show $ length $ filter id $ map (isFullyOverlapping . parseLine) input
+part1 :: [String] -> Int
+part1 input = length $ filter id $ map (isFullyOverlapping . parseLine) input
 
-part2 :: [String] -> String
-part2 input = show $ length $ filter id $ map (isAnyOverlap . parseLine) input
+part2 :: [String] -> Int
+part2 input = length $ filter id $ map (isAnyOverlap . parseLine) input
 
 parseLine :: String -> ((Int, Int), (Int, Int))
 parseLine input = (head ranges, ranges !! 1)
