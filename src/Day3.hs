@@ -12,13 +12,13 @@ part1 input = show $ sum $ map (score . head . duplicates . groupBags) input
 
 part2 :: [String] -> String
 part2 input = show $ sum $ map (score . head . duplicates3) groups
-  where
-    groups = groupElves input
+ where
+  groups = groupElves input
 
 groupBags :: String -> (String, String)
 groupBags s = splitAt groupLength s
-  where
-    groupLength = length s `div` 2
+ where
+  groupLength = length s `div` 2
 
 groupElves :: [String] -> [(String, String, String)]
 groupElves (x : y : z : xs) = (x, y, z) : groupElves xs

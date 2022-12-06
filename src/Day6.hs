@@ -14,5 +14,5 @@ part2 = show . checkFirst 14 . head
 
 checkFirst :: Int -> String -> Int
 checkFirst numToCheck input = if toCheck == nub toCheck then numToCheck else 1 + checkFirst numToCheck (drop 1 input)
-  where
-    toCheck = take numToCheck input
+ where
+  toCheck = take numToCheck input
