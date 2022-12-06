@@ -1,18 +1,27 @@
-module Day4.Day4 where
+module Day4 (solve) where
 
 import Data.List.Split (splitOn)
+
+solve :: IO ()
+solve = do
+  putStrLn "Day 4:"
+  putStr "Part 1"
+  part1
+  putStr "Part 2"
+  part2
+  putStrLn "------------------------"
 
 part1 :: IO ()
 part1 = readFile filename >>= putStrLn . processInput1 . lines
   where
-    -- filename = "src/Day4/sample.txt"
-    filename = "src/Day4/input.txt"
+    -- filename = "input/day4.sample.txt"
+    filename = "input/day4.input.txt"
 
 part2 :: IO ()
 part2 = readFile filename >>= putStrLn . processInput2 . lines
   where
-    -- filename = "src/Day4/sample.txt"
-    filename = "src/Day4/input.txt"
+    -- filename = "input/day4.sample.txt"
+    filename = "input/day4.input.txt"
 
 processInput1 :: [String] -> String
 processInput1 input = show $ length $ filter id $ map (isFullyOverlapping . parseLine) input
