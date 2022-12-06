@@ -1,4 +1,5 @@
-module Utils (commonSolve, InputType (..)) where
+module Utils (commonSolve, InputType (..), debug) where
+import Debug.Trace (traceShow)
 
 getInput :: String -> IO [String]
 getInput filename = lines <$> readFile filename
@@ -22,3 +23,6 @@ data InputType = Input | Sample
 instance Show InputType where
   show Input = "input"
   show Sample = "sample"
+
+debug :: Show b => b -> b
+debug a = traceShow a a
