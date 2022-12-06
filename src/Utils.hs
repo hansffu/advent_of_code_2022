@@ -1,4 +1,4 @@
-module Utils (commonSolve, InputType (..), debug) where
+module Utils (commonSolve, InputType (..), debug, readInt) where
 import Debug.Trace (traceShow)
 
 getInput :: String -> IO [String]
@@ -8,10 +8,8 @@ commonSolve :: Int -> InputType -> ([String] -> String) -> ([String] -> String) 
 commonSolve day inputType part1 part2 = do
   input <- getInput filename
   putStrLn $ "Day " <> show day <> ":"
-  putStr "Part 1:  "
-  putStrLn $ part1 input
-  putStr "Part 2:  "
-  putStrLn $ part2 input
+  putStrLn $ "Part 1:  " <> part1 input
+  putStrLn $ "Part 2:  " <> part2 input
   putStrLn "------------------------"
   where
     filename = "input/day" <> show day <> "." <> show inputType <> ".txt"
@@ -26,3 +24,6 @@ instance Show InputType where
 
 debug :: Show b => b -> b
 debug a = traceShow a a
+
+readInt :: String -> Int
+readInt = read

@@ -4,26 +4,15 @@ import Data.Char (digitToInt, isSpace)
 import Data.List (transpose)
 import Data.List.Extra (trim)
 import Data.List.Split (splitOn)
+import Utils (InputType (..), commonSolve, readInt)
 
 solve :: IO ()
-solve = do
-  putStrLn "Day 5:"
-  putStr "Part 1"
-  part1
-  putStr "Part 2"
-  part2
-  putStrLn "------------------------"
+solve = commonSolve 5 Input part1 part2
 
-part1 :: IO ()
-part1 = readFile filename >>= putStrLn . processInput1 . lines
-  where
-    -- filename = "input/day5.sample.txt"
-    filename = "input/day5.input.txt"
-
-processInput1 :: [String] -> String
+part1 :: [String] -> String
 -- processInput1 input = show initial
 -- processInput1 input = show $ map head $ foldr moveCrates initial commands
-processInput1 input = processCommands1 initial commands
+part1 input = processCommands1 initial commands
   where
     parts = splitOn [""] input
     initialRaw = transpose $ head parts
@@ -55,14 +44,8 @@ moveCrates1 (number, from, to) state = do
       | otherwise = stack
 
 
-part2 :: IO ()
-part2 = readFile filename >>= putStrLn . processInput2 . lines
-  where
-    -- filename = "input/day5.sample.txt"
-    filename = "input/day5.input.txt"
-
-processInput2 :: [String] -> String
-processInput2 input = processCommands2 initial commands
+part2 :: [String] -> String
+part2 input = processCommands2 initial commands
   where
     parts = splitOn [""] input
     initialRaw = transpose $ head parts

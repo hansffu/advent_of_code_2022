@@ -1,32 +1,15 @@
 module Day2 (solve) where
 
+import Utils (InputType (..), commonSolve)
+
 solve :: IO ()
-solve = do
-  putStrLn "Day 2:"
-  putStr "Part 1"
-  part1
-  putStr "Part 2"
-  part2
-  putStrLn "------------------------"
+solve = commonSolve 2 Input part1 part2
 
+part1 :: [String] -> String
+part1 input = show $ sum $ map calculateScore input
 
-part1 :: IO ()
-part1 = readFile filename >>= putStrLn . processInput1 . lines
-  where
-    -- filename = "input/day2.sample.txt"
-    filename = "input/day2.input.txt"
-
-part2 :: IO ()
-part2 = readFile filename >>= putStrLn . processInput2 . lines
-  where
-    -- filename = "input/day2.sample.txt"
-    filename = "input/day2.input.txt"
-
-processInput1 :: [String] -> String
-processInput1 input = show $ sum $ map calculateScore input
-
-processInput2 :: [String] -> String
-processInput2 input = show $ sum $ map (calculateScore . convertInput) input
+part2 :: [String] -> String
+part2 input = show $ sum $ map (calculateScore . convertInput) input
 
 calculateScore :: String -> Int
 calculateScore ['A', ' ', 'X'] = 3 + 1

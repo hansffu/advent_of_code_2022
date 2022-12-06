@@ -2,33 +2,16 @@ module Day3 (solve) where
 
 import Data.List (elemIndex)
 import Data.Maybe (fromMaybe)
+import Utils (InputType (..), commonSolve)
 
 solve :: IO ()
-solve = do
-  putStrLn "Day 3:"
-  putStr "Part 1"
-  part1
-  putStr "Part 2"
-  part2
-  putStrLn "------------------------"
+solve = commonSolve 3 Input part1 part2
 
-part1 :: IO ()
-part1 = readFile filename >>= putStrLn . processInput1 . lines
-  where
-    -- filename = "input/day3.sample.txt"
-    filename = "input/day3.input.txt"
+part1 :: [String] -> String
+part1 input = show $ sum $ map (score . head . duplicates . groupBags) input
 
-processInput1 :: [String] -> String
-processInput1 input = show $ sum $ map (score . head . duplicates . groupBags) input
-
-part2 :: IO ()
-part2 = readFile filename >>= putStrLn . processInput2 . lines
-  where
-    -- filename = "input/day3.sample.txt"
-    filename = "input/day3.input.txt"
-
-processInput2 :: [String] -> String
-processInput2 input = show $ sum $ map (score . head . duplicates3) groups
+part2 :: [String] -> String
+part2 input = show $ sum $ map (score . head . duplicates3) groups
   where
     groups = groupElves input
 
