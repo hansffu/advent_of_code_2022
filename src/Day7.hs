@@ -1,8 +1,7 @@
 module Day7 (solve) where
 
-import Debug.Trace (traceShow)
 import Text.Regex.TDFA
-import Utils (InputType (..), commonSolve, debug)
+import Utils (InputType (..), commonSolve)
 
 solve :: IO ()
 solve = commonSolve 7 Input part1 part2
@@ -18,9 +17,6 @@ part2 input = minimum $ filter (> toDelete) allDirs
  where
   diskSize = 70000000
   spaceNeeded = 30000000
-  printsize :: FS -> (String, Int)
-  printsize (File _ _) = ("file", 0)
-  printsize dir@(Dir name _) = (name, filesize dir)
   commands = map parseLine input
   (fs, _) = getDirectoryContents commands
   allDirs = map filesize $ dirs $ head fs
@@ -69,7 +65,7 @@ getDirectoryContents ((CdInto name) : xs) =
   let (filesInDir, restAfterSubdirs) = getDirectoryContents xs
       (fs, rest) = getDirectoryContents restAfterSubdirs
    in (Dir name filesInDir : fs, rest)
-getDirectoryContents (x : xs) = getDirectoryContents xs
+getDirectoryContents (_ : xs) = getDirectoryContents xs
 
 -- getDirectoryContents (CdInto _) = let
 
@@ -97,4 +93,3 @@ parseLine c
   extractMatches :: (String, String, String, [String]) -> [String]
   extractMatches (_, _, _, x) = x
 
--- where (c:cs) = input
