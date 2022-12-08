@@ -1,16 +1,17 @@
 module Day7 (solve) where
 
+import Control.Monad.State
 import Text.Regex.TDFA
 import Utils (InputType (..), commonSolve)
 
 solve :: IO ()
 solve = commonSolve 7 Input part1 part2
 
-part1 :: [String] -> String
-part1 input = show $ dirsize $ head fs
+part1 :: [String] -> Int
+part1 input = dirsize $ head fs
  where
   commands = map parseLine input
-  (fs, _) = getDirectoryContents commands
+  (fs, _) = runState getDirC commands
 
 part2 :: [String] -> Int
 part2 input = minimum $ filter (> toDelete) allDirs
@@ -18,7 +19,7 @@ part2 input = minimum $ filter (> toDelete) allDirs
   diskSize = 70000000
   spaceNeeded = 30000000
   commands = map parseLine input
-  (fs, _) = getDirectoryContents commands
+  (fs, _) = runState getDirC commands
   allDirs = map filesize $ dirs $ head fs
   spaceUsed = maximum allDirs
   toDelete = spaceUsed - (diskSize - spaceNeeded)
@@ -39,8 +40,6 @@ dirs (File _ _) = []
 dirs dir@(Dir _ []) = [dir]
 dirs dir@(Dir _ files) = let subdirs = files >>= dirs in dir : subdirs
 
--- dirs dir@(Dir _ files) = dir : traceShow files []
-
 dirsize :: FS -> Int
 dirsize (File _ _) = 0
 dirsize dir@(Dir _ files) =
@@ -53,21 +52,6 @@ dirsize dir@(Dir _ files) =
 filesize :: FS -> Int
 filesize (File _ size) = size
 filesize (Dir _ files) = sum $ map filesize files
-
-type Stack = [OutputLine]
-
-getDirectoryContents :: Stack -> ([FS], Stack)
-getDirectoryContents [] = ([], [])
-getDirectoryContents ((FileOutput name size) : xs) = let (fs, rest) = getDirectoryContents xs in (File name size : fs, rest)
-getDirectoryContents ((DirOutput _) : xs) = getDirectoryContents xs
-getDirectoryContents (CdUp : xs) = ([], xs)
-getDirectoryContents ((CdInto name) : xs) =
-  let (filesInDir, restAfterSubdirs) = getDirectoryContents xs
-      (fs, rest) = getDirectoryContents restAfterSubdirs
-   in (Dir name filesInDir : fs, rest)
-getDirectoryContents (_ : xs) = getDirectoryContents xs
-
--- getDirectoryContents (CdInto _) = let
 
 parseLine :: String -> OutputLine
 parseLine c
@@ -93,3 +77,26 @@ parseLine c
   extractMatches :: (String, String, String, [String]) -> [String]
   extractMatches (_, _, _, x) = x
 
+type Stack = [OutputLine]
+
+pop :: State Stack (Maybe OutputLine)
+pop = state doPop
+ where
+  doPop :: [OutputLine] -> (Maybe OutputLine, [OutputLine])
+  doPop [] = (Nothing, [])
+  doPop (x : xs) = (Just x, xs)
+
+getDirC :: State Stack [FS]
+getDirC = do
+  input <- pop
+  case input of
+    Nothing -> return []
+    (Just cmd) -> handleCmd cmd
+ where
+  handleCmd (FileOutput name size) = (:) (File name size) <$> getDirC
+  handleCmd CdUp = return []
+  handleCmd (CdInto name) = do
+    dirContent <- getDirC
+    rest <- getDirC
+    return $ Dir name dirContent : rest
+  handleCmd _ = getDirC
