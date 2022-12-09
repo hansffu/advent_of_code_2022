@@ -1,4 +1,4 @@
-module Utils (commonSolve, InputType (..), debug, readInt) where
+module Utils (commonSolve, InputType (..), debug, readInt, getInput) where
 
 import Debug.Trace (traceShow)
 

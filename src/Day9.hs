@@ -1,10 +1,21 @@
 module Day9 (solve) where
 
 import Data.List (nub)
-import Utils (InputType (..), commonSolve, debug)
+import Utils (getInput)
 
 solve :: IO ()
-solve = commonSolve 9 Input part1 part2
+solve = do
+  input <- getInput filename
+  input2 <- getInput filename2
+  putStrLn $ "Day 9:"
+  putStrLn $ "Part 1:  " <> show (part1 input)
+  putStrLn $ "Part 2:  " <> show (part2 input2)
+  putStrLn "------------------------"
+  where
+    -- filename = "input/day9.sample.txt"
+    -- filename2 = "input/day9-2.sample.txt"
+    filename = "input/day9.input.txt"
+    filename2 = "input/day9.input.txt"
 
 data Direction = R | L | U | D
   deriving (Show)
@@ -13,18 +24,19 @@ type Input = (Direction, Int)
 type Position = (Int, Int)
 
 part1 :: [String] -> Int
-part1 = length . nub . doMoves ((0, 0), (0, 0)) . parseInput
+part1 = length . nub . doMoves ((0, 0), [(0, 0)]) . parseInput
 
-part2 _ = "todo"
+part2 :: [String] -> Int
+part2  = length . nub . doMoves ((0, 0), replicate 9 (0, 0)) . parseInput
 
-doMoves :: (Position, Position) -> [Direction] -> [Position]
+doMoves :: (Position, [Position]) -> [Direction] -> [Position]
 doMoves _ [] = []
-doMoves positions (dir : ds) =
+doMoves ((hx, hy), tails) (dir : ds) =
   let hpos = moveHead dir
-      tpos = follow hpos
-   in tpos : doMoves (hpos, tpos) ds
+      tpos = moveTail ( hpos, tails )
+   in last tpos : doMoves (hpos, tpos) ds
  where
-  ((hx, hy), (tx, ty)) = positions
+  -- ((hx, hy), (tx, ty)) = positions
 
   moveHead :: Direction -> Position
   moveHead R = (hx + 1, hy)
@@ -32,6 +44,10 @@ doMoves positions (dir : ds) =
   moveHead U = (hx, hy + 1)
   moveHead D = (hx, hy - 1)
 
+moveTail :: (Position, [Position]) -> [Position]
+moveTail (_, []) = []
+moveTail (parentPos, (tx, ty) : ts) = let pos =  follow parentPos  in pos : moveTail (pos, ts)
+ where
   determineMoveInAxis :: Int -> Int -> Int -> Int
   determineMoveInAxis limit pc tc
     | pc - tc > limit = tc + 1
