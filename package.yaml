@@ -25,6 +25,7 @@ dependencies:
   - extra
   - regex-tdfa
   - mtl
+  - MissingH
 
 ghc-options:
   - -Wall
