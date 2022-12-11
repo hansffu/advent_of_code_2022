@@ -13,21 +13,22 @@ solve :: IO ()
 solve = commonSolve 11 Input part1 part2
 
 part1 :: [String] -> Int
-part1 input = product $ take 2 $ reverse $ sort handledByMonkey
+part1 input = executeGame monkeys 20 calculateWorryLevel1
   where
     monkeys = map parseMonkey $ splitOn [""] input
-    initialItems = map ((0,) . startingItems) monkeys
-    resultsAfter20 = executeRounds monkeys initialItems !! 19
-    handledByMonkey = map fst resultsAfter20
 
-part2 input = product $ take 2 $ reverse $ sort handledByMonkey
--- part2 input = a
+part2 :: [String] -> Int
+part2 input = executeGame monkeys 10000 calculateWorryLevel
   where
-    a = product $ testIsDivisibleBy <$> monkeys
     monkeys = map parseMonkey $ splitOn [""] input
+    calculateWorryLevel = calculateWorryLevel2 $ product $ testIsDivisibleBy <$> monkeys
+
+executeGame :: [Monkey] -> Int -> CalculateWorryLevel -> Int
+executeGame monkeys rounds calculateWorryLevel = product $ take 2 $ reverse $ sort handledByMonkey
+  where
     initialItems = map ((0,) . startingItems) monkeys
-    resultsAfter20 = executeRounds monkeys initialItems !! 9999
-    handledByMonkey = map fst resultsAfter20
+    resultsAfterRounds = executeRounds calculateWorryLevel monkeys initialItems !! (rounds - 1)
+    handledByMonkey = map fst resultsAfterRounds
 
 data Monkey = Monkey
   { monkeyId :: Int,
@@ -42,24 +43,24 @@ instance Show Monkey where
   show :: Monkey -> String
   show monkey = "Monkey: " <> show (monkeyId monkey) <> "  items: " <> show (startingItems monkey) <> show (operation monkey 1)
 
-executeRounds :: [Monkey] -> [(Int, [Int])] -> [[(Int, [Int])]]
-executeRounds monkeys initialMonkeyItems = roundResult : executeRounds monkeys roundResult
+executeRounds :: CalculateWorryLevel -> [Monkey] -> [(Int, [Int])] -> [[(Int, [Int])]]
+executeRounds calculateWorryLevel monkeys initialMonkeyItems = roundResult : executeRounds calculateWorryLevel monkeys roundResult
   where
-    roundResult = executeRound monkeys initialMonkeyItems
+    roundResult = executeRound calculateWorryLevel monkeys initialMonkeyItems
 
-executeRound :: [Monkey] -> [(Int, [Int])] -> [(Int, [Int])]
-executeRound monkeys = execute 0
+executeRound :: CalculateWorryLevel -> [Monkey] -> [(Int, [Int])] -> [(Int, [Int])]
+executeRound calculateWorryLevel monkeys = execute 0
   where
     execute index allItems
       | index >= length monkeys = allItems
-      | otherwise = execute (index + 1) $ executeThrow monkeys index allItems
+      | otherwise = execute (index + 1) $ executeThrow calculateWorryLevel monkeys index allItems
 
-executeThrow :: [Monkey] -> Int -> [(Int, [Int])] -> [(Int, [Int])]
-executeThrow monkeys currentMonkeyIndex allMonkeyContAndItems = map (getMonkeyItems . monkeyId) monkeys
+executeThrow :: CalculateWorryLevel -> [Monkey] -> Int -> [(Int, [Int])] -> [(Int, [Int])]
+executeThrow calculateWorryLevel monkeys currentMonkeyIndex allMonkeyContAndItems = map (getMonkeyItems . monkeyId) monkeys
   where
     monkey = monkeys !! currentMonkeyIndex
     (count, items) = allMonkeyContAndItems !! currentMonkeyIndex
-    throwResult = calculateThrows monkey items
+    throwResult = calculateThrows calculateWorryLevel monkey items
     getMonkeyItems index =
       if index == currentMonkeyIndex
         then (count + length items, [])
@@ -84,8 +85,8 @@ createOperation xs old = n
     op = if head xs == "*" then (*) else (+)
     n = if last xs == "old" then op old old else op old (readInt $ last xs)
 
-calculateThrows :: Monkey -> [Int] -> [(Int, Int)]
-calculateThrows monkey = map calculateThrow
+calculateThrows :: CalculateWorryLevel -> Monkey -> [Int] -> [(Int, Int)]
+calculateThrows calculateWorryLevel monkey = map calculateThrow
   where
     calculateThrow :: Int -> (Int, Int)
     calculateThrow item =
@@ -94,8 +95,12 @@ calculateThrows monkey = map calculateThrow
           nextMonkey = (if testResult then trueToMonkey else falseToMonkey) monkey
        in (nextMonkey, newWorryLevel `mod` 9699690)
 
-calculateWorryLevel :: Monkey -> Int -> Int
-calculateWorryLevel monkey item = newItem `mod` modBy
+type CalculateWorryLevel = Monkey -> Int -> Int
+
+calculateWorryLevel1 :: CalculateWorryLevel
+calculateWorryLevel1 monkey item = operation monkey item `div` 3
+
+calculateWorryLevel2 :: Int -> CalculateWorryLevel
+calculateWorryLevel2 modBy monkey item = newItem `mod` modBy
  where
-   modBy = 9699690
    newItem = operation monkey item
