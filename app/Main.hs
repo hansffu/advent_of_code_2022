@@ -1,6 +1,6 @@
 module Main (main) where
 
-import Day11
+import Day12
 -- import Day2
 -- import Day3
 -- import Day4
@@ -10,7 +10,7 @@ import Day11
 
 main :: IO ()
 main = do
-  Day11.solve
+  Day12.solve
   -- Day2.solve
   -- Day3.solve
   -- Day4.solve

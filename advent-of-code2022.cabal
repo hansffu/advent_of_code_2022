@@ -47,7 +47,9 @@ library
   build-depends:
       MissingH
     , base >=4.7 && <5
+    , containers
     , extra
+    , memoize
     , mtl
     , regex-tdfa
     , split
@@ -64,7 +66,9 @@ executable advent-of-code2022-exe
       MissingH
     , advent-of-code2022
     , base >=4.7 && <5
+    , containers
     , extra
+    , memoize
     , mtl
     , regex-tdfa
     , split
@@ -82,7 +86,9 @@ test-suite advent-of-code2022-test
       MissingH
     , advent-of-code2022
     , base >=4.7 && <5
+    , containers
     , extra
+    , memoize
     , mtl
     , regex-tdfa
     , split

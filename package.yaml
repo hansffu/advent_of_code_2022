@@ -26,6 +26,8 @@ dependencies:
   - regex-tdfa
   - mtl
   - MissingH
+  - containers
+  - memoize
 
 ghc-options:
   - -Wall
