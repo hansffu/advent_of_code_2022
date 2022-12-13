@@ -5,6 +5,7 @@ import Data.Char (digitToInt, isDigit)
 import Data.List (sort, elemIndex)
 import Data.List.Split (splitOn)
 import Utils (InputType (..), commonSolve)
+import Utils.Stack(Stack, pop)
 
 solve :: IO ()
 solve = commonSolve 13 Input part1 part2
@@ -60,7 +61,7 @@ parsePair (p1 : p2 : _) = (a, b)
 parsePacket :: String -> PacketData
 parsePacket = head . evalState parseData
 
-parseData :: State Stack [PacketData]
+parseData :: State CharStack [PacketData]
 parseData = do
   nextChar <- pop
   case nextChar of
@@ -80,16 +81,9 @@ parseData = do
           Nothing -> digitToInt num
     (:) (PacketNumber num') <$> parseData
 
-type Stack = [Char]
+type CharStack = Stack Char
 
-pop :: State Stack (Maybe Char)
-pop = state doPop
- where
-  doPop :: [Char] -> (Maybe Char, [Char])
-  doPop [] = (Nothing, [])
-  doPop (x : xs) = (Just x, xs)
-
-popDigit :: State Stack (Maybe Char)
+popDigit :: State CharStack (Maybe Char)
 popDigit = state doPop
  where
   doPop :: [Char] -> (Maybe Char, [Char])

@@ -40,3 +40,5 @@ debug a = traceShow a a
 
 readInt :: String -> Int
 readInt = read
+
+

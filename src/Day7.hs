@@ -3,6 +3,7 @@ module Day7 (solve) where
 import Control.Monad.State
 import Text.Regex.TDFA
 import Utils (InputType (..), commonSolve)
+import Utils.Stack (Stack, pop)
 
 solve :: IO ()
 solve = commonSolve 7 Input part1 part2
@@ -77,16 +78,9 @@ parseLine c
   extractMatches :: (String, String, String, [String]) -> [String]
   extractMatches (_, _, _, x) = x
 
-type Stack = [OutputLine]
+type LineStack = Stack OutputLine
 
-pop :: State Stack (Maybe OutputLine)
-pop = state doPop
- where
-  doPop :: [OutputLine] -> (Maybe OutputLine, [OutputLine])
-  doPop [] = (Nothing, [])
-  doPop (x : xs) = (Just x, xs)
-
-getDirC :: State Stack [FS]
+getDirC :: State LineStack [FS]
 getDirC = do
   input <- pop
   case input of
