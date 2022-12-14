@@ -1,53 +1,60 @@
 module Day14 (solve) where
 
-import Data.List.Split (splitOn)
-import Utils (InputType (..), commonSolve)
 import Data.List (nub)
+import Data.List.Split (splitOn)
+import Data.Maybe (isNothing)
+import qualified Data.Set as Set
+import Utils (InputType (..), commonSolve)
 
 solve :: IO ()
 solve = commonSolve 14 Input part1 part2
 
-part1 input = simulate rockCoordinates
-  where
-    rockCoordinates = Rock <$> nub (input >>= getRockCoordinates)
+type ObstacleSet = Set.Set Coordinate
 
-part2 :: b -> String
-part2 = const "todo"
+part1 :: [String] -> Int
+part1 input = simulate Nothing rockMap 0
+ where
+  rockMap = Set.fromList rockCoordinates
+  rockCoordinates = nub (input >>= getRockCoordinates)
+
+part2 :: [String] -> Int
+part2 input = simulate caveFloor rockMap 0
+ where
+  rockMap = Set.fromList rockCoordinates
+  rockCoordinates = nub (input >>= getRockCoordinates)
+  caveFloor = Just $ 2 + maximum (yCoordinate <$> rockCoordinates)
 
 type Coordinate = (Int, Int)
-data Obstacle = Rock Coordinate | Sand Coordinate deriving (Show)
 
-coordinates :: Obstacle -> Coordinate
-coordinates (Rock c) = c
-coordinates (Sand c) = c
+yCoordinate :: Coordinate -> Int
+yCoordinate = snd
 
-yCoordinate :: Obstacle -> Int
-yCoordinate = snd . coordinates
-
-simulate :: [Obstacle] -> Int
-simulate obstacles = case sandPosition of
-  Nothing -> 0
-  Just pos -> 1 + simulate (Sand pos:obstacles)
+simulate :: Maybe Int -> ObstacleSet -> Int -> Int
+simulate caveFloor obstacles counter = case sandPosition of
+  Nothing -> counter
+  Just pos -> simulate caveFloor (Set.insert pos obstacles) (succ counter)
  where
-   sandPosition = simulateSandFall obstacles (500,0)
+  sandPosition = simulateSandFall caveFloor obstacles (500, 0)
 
-simulateSandFall :: [Obstacle] -> Coordinate -> Maybe Coordinate
-simulateSandFall obstacles sandPosition@(x,y)
-  | snd sandPosition > fallWhenY = Nothing
-  | otherwise = nextCoordinate
+simulateSandFall :: Maybe Int -> ObstacleSet -> Coordinate -> Maybe Coordinate
+simulateSandFall caveFloor obstacles sandPosition@(x, y)
+  | isNothing caveFloor && snd sandPosition > fallWhenY = Nothing
+  | isFree sandPosition = nextCoordinate
+  | otherwise = Nothing
  where
-   fallWhenY = maximum $ yCoordinate <$> obstacles
-   next = simulateSandFall obstacles
-   nextCoordinate
-     | isFree (x,y+1) = next (x,y+1)
-     | isFree (x-1,y+1) = next (x-1,y+1)
-     | isFree (x+1,y+1) = next (x+1,y+1)
-     | otherwise = Just sandPosition
+  fallWhenY = maximum $ Set.map yCoordinate obstacles
+  next = simulateSandFall caveFloor obstacles
+  nextCoordinate
+    | isFree (x, y + 1) = next (x, y + 1)
+    | isFree (x - 1, y + 1) = next (x - 1, y + 1)
+    | isFree (x + 1, y + 1) = next (x + 1, y + 1)
+    | otherwise = Just sandPosition
 
-   isFree = not . coordinateHasObstacle obstacles
+  isFree = not . coordinateHasObstacle caveFloor obstacles
 
-coordinateHasObstacle :: [Obstacle] -> Coordinate -> Bool
-coordinateHasObstacle obstacles coordinate = any (\o -> coordinates o == coordinate) obstacles
+coordinateHasObstacle :: Maybe Int -> ObstacleSet -> Coordinate -> Bool
+coordinateHasObstacle Nothing obstacles coordinate = coordinate `Set.member` obstacles
+coordinateHasObstacle (Just caveFloor) obstacles coordinate = yCoordinate coordinate == caveFloor || coordinate `Set.member` obstacles
 
 parseLine :: String -> [Coordinate]
 parseLine line = toPairs . toInts . splitOn "," <$> splitOn " -> " line
@@ -58,11 +65,11 @@ parseLine line = toPairs . toInts . splitOn "," <$> splitOn " -> " line
 
 getRockCoordinates :: String -> [Coordinate]
 getRockCoordinates = nub . paths . parseLine
-  where
-    paths :: [Coordinate] -> [Coordinate]
-    paths [] = []
-    paths [c] = [c]
-    paths (c1:c2:cs) = pathBetween c1 c2 ++ paths (c2:cs)
+ where
+  paths :: [Coordinate] -> [Coordinate]
+  paths [] = []
+  paths [c] = [c]
+  paths (c1 : c2 : cs) = pathBetween c1 c2 ++ paths (c2 : cs)
 
 pathBetween :: Coordinate -> Coordinate -> [Coordinate]
 pathBetween c1@(x1, y1) c2@(x2, y2)
