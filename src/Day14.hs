@@ -3,12 +3,11 @@ module Day14 (solve) where
 import Data.List.Split (splitOn)
 import Utils (InputType (..), commonSolve)
 import Data.List (nub)
-import Data.Foldable (maximumBy)
 
 solve :: IO ()
-solve = commonSolve 14 Sample part1 part2
+solve = commonSolve 14 Input part1 part2
 
-part1 input = rockCoordinates
+part1 input = simulate rockCoordinates
   where
     rockCoordinates = Rock <$> nub (input >>= getRockCoordinates)
 
@@ -20,17 +19,32 @@ data Obstacle = Rock Coordinate | Sand Coordinate deriving (Show)
 
 coordinates :: Obstacle -> Coordinate
 coordinates (Rock c) = c
+coordinates (Sand c) = c
 
 yCoordinate :: Obstacle -> Int
 yCoordinate = snd . coordinates
 
+simulate :: [Obstacle] -> Int
+simulate obstacles = case sandPosition of
+  Nothing -> 0
+  Just pos -> 1 + simulate (Sand pos:obstacles)
+ where
+   sandPosition = simulateSandFall obstacles (500,0)
+
 simulateSandFall :: [Obstacle] -> Coordinate -> Maybe Coordinate
-simulateSandFall obstacles sandPosition
+simulateSandFall obstacles sandPosition@(x,y)
   | snd sandPosition > fallWhenY = Nothing
-  | otherwise = Nothing
+  | otherwise = nextCoordinate
  where
    fallWhenY = maximum $ yCoordinate <$> obstacles
-   obstacleOnCoordinate coordinate = 0
+   next = simulateSandFall obstacles
+   nextCoordinate
+     | isFree (x,y+1) = next (x,y+1)
+     | isFree (x-1,y+1) = next (x-1,y+1)
+     | isFree (x+1,y+1) = next (x+1,y+1)
+     | otherwise = Just sandPosition
+
+   isFree = not . coordinateHasObstacle obstacles
 
 coordinateHasObstacle :: [Obstacle] -> Coordinate -> Bool
 coordinateHasObstacle obstacles coordinate = any (\o -> coordinates o == coordinate) obstacles
