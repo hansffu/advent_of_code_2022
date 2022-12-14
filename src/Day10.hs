@@ -1,8 +1,8 @@
 module Day10 (solve) where
 
-import Utils (InputType (..), commonSolveIO)
 import Data.List.Split (chunksOf)
 import Data.List.Utils (join)
+import Utils (InputType (..), commonSolveIO)
 
 solve :: IO ()
 solve = commonSolveIO 10 Input part1 part2
@@ -14,30 +14,30 @@ part1 = print . sumResults . calcCycles . parseInput
   sumResults cycles = sum $ map (signalStrength cycles) [20, 60, 100, 140, 180, 220]
 
 part2 :: [String] -> IO ()
-part2 input = putStrLn  $ join "\n" $ map drawLine $ chunksOf 40 sprites
+part2 input = putStrLn $ join "\n" $ map drawLine $ chunksOf 40 sprites
  where
   cycles = (calcCycles . parseInput) input
   sprites = createSprites cycles
 
 drawLine :: [[Int]] -> [Char]
-drawLine bs = map (\i -> if i `elem` (bs !! i) then '#' else '.') [0..39]
+drawLine bs = map (\i -> if i `elem` (bs !! i) then '#' else '.') [0 .. (length bs - 1)]
 
 createSprites :: [Int] -> [[Int]]
-createSprites ([]) = []
-createSprites (0:bs) = [0,1]: createSprites bs
-createSprites (39:bs) = [38, 39]: createSprites bs
-createSprites (b:bs) = [b-1, b, b+1] : createSprites bs
+createSprites [] = []
+createSprites (0 : bs) = [0, 1] : createSprites bs
+createSprites (39 : bs) = [38, 39] : createSprites bs
+createSprites (b : bs) = [b - 1, b, b + 1] : createSprites bs
 
 data Command = Noop | Addx Int
   deriving (Show)
 
 calcCycles :: [Command] -> [Int]
-calcCycles cs = helper [1] cs
+calcCycles = helper [1]
  where
   helper :: [Int] -> [Command] -> [Int]
   helper prev [] = prev
-  helper prev (Noop : cs) = helper (prev ++ [last prev]) cs
-  helper prev ((Addx n) : cs) = helper (prev ++ [lastX, lastX + n]) cs
+  helper prev (Noop : cs') = helper (prev ++ [last prev]) cs'
+  helper prev ((Addx n) : cs') = helper (prev ++ [lastX, lastX + n]) cs'
    where
     lastX = last prev
 
