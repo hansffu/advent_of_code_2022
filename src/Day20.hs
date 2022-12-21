@@ -12,12 +12,11 @@ solve = commonSolve 20 Sample part1 part2
 part1 input = mix orig
  where
   orig = readInt <$> input
-  origLength = length orig
-  withIndex = zip [0 ..] orig
 
 mix :: [Int] -> [Int]
-mix original = map fst $ foldl mix' [] $ zip original [0 ..]
+mix original = map fst $ foldl mix' indexed indexed
  where
+  indexed = zip original [0..]
   origLength = length original
   mix' :: [(Int, Int)] -> (Int, Int) -> [(Int, Int)]
   mix' currentList item@(num, origIndex) =
@@ -27,14 +26,18 @@ mix original = map fst $ foldl mix' [] $ zip original [0 ..]
         after = if null after' then after' else tail after'
         -- before = takeWhile ((/= origIndex) . snd) currentList
         -- after = drop (length before) currentList
-     in before ++ item : after
+     in move currentIndex newIndex currentList
 
--- mix :: Int -> Int -> [Int] -> [Int]
--- mix startIndex end table
---  | startIndex == end = table
---  | otherwise = mixed
---   where
---     currentIndex =
+move :: Int -> Int -> [a] -> [a]
+move from to lst = left ++ middle ++ right
+ where
+   (left, rest) = splitAt (min from to) lst
+   (middle', right') = splitAt (max from to) lst
+   (middle, right)
+    | to == from = (middle', right')
+    | to > from = (head right': middle' , tail right')
+    | otherwise = (tail middle', head middle':right')
+
 
 part2 :: [String] -> String
 part2 _ = "todo"
