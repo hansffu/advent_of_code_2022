@@ -1,10 +1,8 @@
 module Day20 (solve) where
 
 import Data.List.Extra (findIndex)
-
 import Data.Maybe (fromMaybe)
-import Debug.Trace (traceShow)
-import Utils (InputType (..), commonSolve, debug, readInt, repeatList)
+import Utils (InputType (..), commonSolve, readInt, repeatList)
 
 solve :: IO ()
 solve = commonSolve 20 Input part1 part2
@@ -13,11 +11,11 @@ part1 :: [String] -> Int
 part1 input = result !! 1000 + result !! 2000 + result !! 3000
  where
   orig = readInt <$> input
-  mixed = repeatList $ mix orig
+  mixed = repeatList $ mix orig 1
   result = dropWhile (/= 0) mixed
 
-mix :: [Int] -> [Int]
-mix original = map fst $ foldl mix' indexed indexed
+mix :: [Int] -> Int -> [Int]
+mix original times = map fst $ iterate (\x -> foldl mix' x indexed) indexed !! times
  where
   indexed = zip original [0 ..]
   origLength = length original
@@ -25,12 +23,10 @@ mix original = map fst $ foldl mix' indexed indexed
   mix' currentList (num, origIndex) =
     let currentIndex = fromMaybe 0 $ findIndex ((== origIndex) . snd) currentList
         nextIndexRaw = currentIndex + num
-        -- newIndex = (traceShow (show currentIndex <> "+" <> show num <> "=" <> show nextIndexRaw )nextIndexRaw) `mod` (origLength - 1)
         newIndex = if nextIndexRaw == 0 then 6 else nextIndexRaw `mod` (origLength - 1)
-     in -- traceShow (show currentIndex <> "->" <> show newIndex <> ":  " <> show (map fst currentList))
-        move currentIndex newIndex currentList
+     in move currentIndex newIndex currentList
 
-move :: Show a => Int -> Int -> [a] -> [a]
+move :: Int -> Int -> [a] -> [a]
 move from to lst = left ++ middle ++ right
  where
   min' = min from to
@@ -42,7 +38,10 @@ move from to lst = left ++ middle ++ right
     | from > to = (head right' : middle', tail right')
     | otherwise = (tail middle', head middle' : right')
 
-part2 :: [String] -> String
-part2 _ = "todo"
-
-getOrigIndex = snd
+part2 :: [String] -> Int
+part2 input = result !! 1000 + result !! 2000 + result !! 3000
+ where
+  orig = (* 811589153) . readInt <$> input
+  mixed = repeatList $ mix orig 10
+  -- mixed = repeatList $ iterate mix orig !! 10
+  result = dropWhile (/= 0) mixed
