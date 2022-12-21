@@ -1,5 +1,6 @@
-module Utils (commonSolve, commonSolveIO, InputType (..), debug, readInt, getInput) where
+module Utils (commonSolve, commonSolveIO, InputType (..), debug, readInt, getInput, repeatList) where
 
+import Control.Monad (join)
 import Debug.Trace (traceShow)
 
 getInput :: String -> IO [String]
@@ -41,4 +42,5 @@ debug a = traceShow a a
 readInt :: String -> Int
 readInt = read
 
-
+repeatList :: [a] -> [a]
+repeatList = join . repeat
