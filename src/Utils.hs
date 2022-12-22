@@ -1,4 +1,4 @@
-module Utils (commonSolve, commonSolveIO, InputType (..), debug, readInt, getInput, repeatList) where
+module Utils (commonSolve, commonSolveIO, InputType (..), debug, readInt, getInput, repeatList, todo) where
 
 import Control.Monad (join)
 import Debug.Trace (traceShow)
@@ -44,3 +44,6 @@ readInt = read
 
 repeatList :: [a] -> [a]
 repeatList = join . repeat
+
+todo :: b -> String
+todo = const "todo"
