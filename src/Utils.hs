@@ -1,4 +1,14 @@
-module Utils (commonSolve, commonSolveIO, InputType (..), debug, readInt, getInput, repeatList, todo) where
+module Utils (
+  commonSolve,
+  commonSolveIO,
+  InputType (..),
+  debug,
+  readInt,
+  getInput,
+  repeatList,
+  todo,
+  todoIO,
+) where
 
 import Control.Monad (join)
 import Debug.Trace (traceShow)
@@ -6,7 +16,7 @@ import Debug.Trace (traceShow)
 getInput :: String -> IO [String]
 getInput filename = lines <$> readFile filename
 
-commonSolveIO ::  Int -> InputType -> ([String] -> IO ()) -> ([String] -> IO ()) -> IO ()
+commonSolveIO :: Int -> InputType -> ([String] -> IO ()) -> ([String] -> IO ()) -> IO ()
 commonSolveIO day inputType part1 part2 = do
   input <- getInput filename
   putStrLn $ "Day " <> show day <> ":"
@@ -15,18 +25,18 @@ commonSolveIO day inputType part1 part2 = do
   putStrLn $ "Part 2:  "
   part2 input
   putStrLn "------------------------"
-  where
-    filename = "input/day" <> show day <> "." <> show inputType <> ".txt"
+ where
+  filename = "input/day" <> show day <> "." <> show inputType <> ".txt"
 
-commonSolve :: (Show a, Show b) =>  Int -> InputType -> ([String] -> a) -> ([String] -> b) -> IO ()
+commonSolve :: (Show a, Show b) => Int -> InputType -> ([String] -> a) -> ([String] -> b) -> IO ()
 commonSolve day inputType part1 part2 = do
   input <- getInput filename
   putStrLn $ "Day " <> show day <> ":"
   putStrLn $ "Part 1:  " <> show (part1 input)
   putStrLn $ "Part 2:  " <> show (part2 input)
   putStrLn "------------------------"
-  where
-    filename = "input/day" <> show day <> "." <> show inputType <> ".txt"
+ where
+  filename = "input/day" <> show day <> "." <> show inputType <> ".txt"
 
 -- where filename = "input/day6.input.txt"
 
@@ -47,3 +57,6 @@ repeatList = join . repeat
 
 todo :: b -> String
 todo = const "todo"
+
+todoIO :: b -> IO ()
+todoIO _ = do putStrLn "todo"
